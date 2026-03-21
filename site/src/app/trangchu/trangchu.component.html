@@ -1,0 +1,16 @@
+<section class="banner">
+  <div class="banner-image">
+      <img src="./images/banner.png">
+  </div>
+  <div class="banner-navigation">
+      <button class="prev-button"><i class="fas fa-chevron-left"></i></button>
+      <button class="next-button"><i class="fas fa-chevron-right"></i></button>
+  </div>
+</section>
+
+<div class="container">
+  <app-listcard [data]="newProducts" [title]="'Sản phẩm mới'"></app-listcard>
+  <app-listcard [data]="saleProducts" [title]="'Sản phẩm sale'"></app-listcard>
+  <app-listcard [data]="hotProducts" [title]="'Sản phẩm hot'"></app-listcard>
+
+</div>

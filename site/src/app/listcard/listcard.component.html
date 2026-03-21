@@ -1,0 +1,47 @@
+<section class="products-section">
+  <div class="container">
+    <div class="section-header">
+      <h2>{{title}}</h2>
+      <!-- <a href="#" class="view-more">Xem thêm</a> -->
+    </div>
+
+    <div class="products-grid">
+      <div class="product-card" *ngFor="let product of data">
+        <div class="product-image">
+          <!-- Hiển thị discount-tag cho sản phẩm sale -->
+          <span class="discount-tag" *ngIf="isSaleProduct(product)">
+            Giảm {{ calculateDiscountPercentage(product.price, product.salePrice!) }}%
+          </span>
+          <!-- Hiển thị new-tag chỉ khi không phải sản phẩm sale -->
+          <span class="new-tag" *ngIf="isNewProduct(product.createdAt)">NEW</span>
+          <span class="hot-star blink-hot" *ngIf="title === 'Sản phẩm hot'">🔥 HOT</span>
+
+
+
+          <!-- Thêm routerLink vào ảnh -->
+          <a [routerLink]="['/chitiet', product._id]">
+            <img src="http://localhost:3000{{product.thumbnail}}" alt="{{product.name}}">
+          </a>
+          <button class="prev-product"><i class="fas fa-chevron-left"></i></button>
+          <button class="next-product"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="product-info">
+          <!-- Thêm routerLink vào tên sản phẩm -->
+          <h3 class="product-title">
+            <a style="text-decoration: none;" [routerLink]="['/chitiet', product._id]">{{product.name}}</a>
+          </h3>
+          <div class="product-price">
+            <span class="current-price">
+              {{ isSaleProduct(product) ? (product.salePrice | number:'1.0-0') : (product.price | number:'1.0-0') }}₫
+            </span>
+
+            <span class="old-price" *ngIf="isSaleProduct(product)">
+              {{product.price | number:'1.0-0'}}₫
+            </span>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

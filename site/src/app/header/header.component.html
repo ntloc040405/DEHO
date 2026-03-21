@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moho - Trang chủ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head> 
+<body>
+<header>
+  <div class="container">
+    <div class="top-header">
+      <div class="logo">
+        <a href="/"><img src="./images/logo.png" alt="Moho"></a>
+      </div>
+      <div class="search-box">
+        <form (ngSubmit)="onSearch()">
+          <input
+            type="text"
+            placeholder="Tìm kiếm sản phẩm..."
+            [(ngModel)]="searchQuery"
+            name="q"
+            (keyup.enter)="onSearch()"
+          />
+          <button type="submit"><i class="fas fa-search"></i></button>
+        </form>
+      </div>
+      <div class="header-actions">
+        <a href="#" class="three-d-house">3D HOUSE</a>
+        <div class="account-menu">
+          <a *ngIf="!isLoggedIn" [routerLink]="['/dangnhap']">
+            <i class="far fa-user"></i>
+            <span>Đăng nhập / Đăng ký <br />Tài khoản của tôi <i class="fas fa-chevron-down"></i></span>
+          </a>
+          <div *ngIf="isLoggedIn" class="user-icon" (click)="toggleMenu()">
+            <img
+              *ngIf="user?.avatar"
+              [src]="'http://localhost:3000' + user.avatar"
+              alt="Avatar"
+              class="avatar"
+            />
+            <i *ngIf="!user?.avatar" class="far fa-user"></i>
+          </div>
+          <!-- Dropdown menu -->
+          <div *ngIf="showMenu" class="dropdown-menu" [ngClass]="{ show: showMenu }">
+            <div class="dropdown-content">
+              <h3>Xin chào, {{ user?.name || 'Người dùng' }}</h3>
+              <ul>
+                <li><a [routerLink]="['/userinfo']">Thông tin cá nhân</a></li>  
+                <li><a [routerLink]="['/donhang']">Đơn hàng đã mua</a></li>
+                <li><a [routerLink]="['/']">Cài đặt</a></li>
+                <li><a (click)="logout()">Đăng xuất</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="cart">
+          <a routerLink="/giohang" class="cart-icon">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count">{{ cartItemCount }}</span>
+            <span>Giỏ hàng</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <nav class="main-nav">
+      <ul>
+        <li class="has-dropdown"><a href="#">Trang Chủ</a></li>
+        <li class="has-dropdown"><a routerLink="/sanpham">Sản Phẩm</a></li>
+        <li class="has-dropdown"><a routerLink="/lienhe">Liên Hệ</a></li>
+        <li><a routerLink="/gioithieu">Giới Thiệu</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+</body>
+</html>

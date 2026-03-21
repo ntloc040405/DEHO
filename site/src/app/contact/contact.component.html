@@ -1,0 +1,78 @@
+<section class="contact-section">
+  <div class="container">
+    <div class="header">
+      <h1>Liên Hệ Với Deho</h1>
+      <p class="subtitle">Chào mừng bạn đến với Deho - Nơi biến ngôi nhà của bạn thành tổ ấm hoàn hảo. Chúng tôi tự hào cung cấp nội thất cao cấp, thiết kế hiện đại, chất lượng vượt trội, từ sofa sang trọng đến bàn ăn tinh tế. Hãy để lại thông tin để đội ngũ Deho tư vấn và hỗ trợ bạn sớm nhất!</p>
+    </div>
+    <div class="form-wrapper">
+      <form (ngSubmit)="onSubmit()" #contactForm="ngForm" class="contact-form">
+        <div class="form-group">
+          <label for="name">Họ và Tên:</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            [(ngModel)]="contact.name"
+            required
+            #name="ngModel"
+            class="form-control"
+            placeholder="Nhập họ và tên của bạn"
+            [ngClass]="{'is-invalid': name.invalid && (name.dirty || name.touched)}"
+          >
+          <div *ngIf="name.invalid && (name.dirty || name.touched)" class="invalid-feedback">
+            Vui lòng nhập họ và tên.
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            [(ngModel)]="contact.email"
+            required
+            email
+            #email="ngModel"
+            class="form-control"
+            placeholder="Nhập địa chỉ email của bạn"
+            [ngClass]="{'is-invalid': email.invalid && (email.dirty || email.touched)}"
+          >
+          <div *ngIf="email.invalid && (email.dirty || email.touched)" class="invalid-feedback">
+            Vui lòng nhập email hợp lệ.
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="message">Tin Nhắn:</label>
+          <textarea
+            id="message"
+            name="message"
+            [(ngModel)]="contact.message"
+            required
+            #message="ngModel"
+            class="form-control"
+            rows="6"
+            placeholder="Hãy cho chúng tôi biết nhu cầu của bạn (ví dụ: tư vấn thiết kế nội thất, báo giá sản phẩm, hoặc câu hỏi khác)"
+            [ngClass]="{'is-invalid': message.invalid && (message.dirty || name.touched)}"
+          ></textarea>
+          <div *ngIf="message.invalid && (message.dirty || name.touched)" class="invalid-feedback">
+            Vui lòng nhập tin nhắn.
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" [disabled]="contactForm.invalid">Gửi Thông Tin</button>
+      </form>
+      <div class="contact-info">
+        <h3>Thông Tin Liên Hệ</h3>
+        <p><strong>Deho Nội Thất Cao Cấp</strong></p>
+        <p>Email: <a href="mailto:support@deho.vn">supportdeho.vn</a></p>
+        <p>Hotline: <a href="tel:+84987654321">0987 654 321</a></p>
+        <p>Địa chỉ: 123 Đường Nội Thất, Quận 1, TP. Hồ Chí Minh</p>
+        <p>Thời gian làm việc: Thứ 2 - Chủ Nhật, 8:00 - 20:00</p>
+      </div>
+    </div>
+    <p *ngIf="successMessage" class="message">{{ successMessage }}</p>
+    <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+    <div class="footer-text">
+      <p>Tại Deho, chúng tôi cam kết mang đến những sản phẩm nội thất tinh tế, bền bỉ và phù hợp với mọi phong cách sống. Liên hệ ngay hôm nay để nhận tư vấn miễn phí từ các chuyên gia thiết kế nội thất của chúng tôi!</p>
+    </div>
+  </div>
+</section>
