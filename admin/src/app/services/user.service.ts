@@ -22,7 +22,7 @@ export interface ApiResponse<T> {
   providedIn: 'root',
 })
 export class UserService {
-  private apiUrl = 'http://localhost:3000/users';
+  private apiUrl = 'http://localhost:4405/users';
 
   constructor(private http: HttpClient) {}
 

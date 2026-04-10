@@ -8,7 +8,7 @@ import { tap, map } from 'rxjs/operators'; // Thêm map
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000';
+  private apiUrl = 'http://localhost:4405';
 
   constructor(private http: HttpClient) {}
 
@@ -71,6 +71,35 @@ export class AuthService {
 
   getToken(): string | null {
     return localStorage.getItem('token');
+  }
+
+  validateSession(): void {
+    const token = this.getToken();
+    if (!token) return;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const userId = payload.userId;
+
+      const headers = {
+        'Authorization': `Bearer ${token}`
+      };
+
+      this.http.get(`${this.apiUrl}/users/${userId}`, { headers }).subscribe({
+        next: (res: any) => {
+          if (!res.success || !res.data || res.data.role !== 'admin') {
+            this.logout();
+            window.location.reload();
+          }
+        },
+        error: () => {
+          this.logout();
+          window.location.reload();
+        }
+      });
+    } catch (err) {
+      this.logout();
+    }
   }
 
   logout(): void {

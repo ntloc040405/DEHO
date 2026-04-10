@@ -1,0 +1,77 @@
+<div class="admin-layout" [class.sidebar-collapsed]="isSidebarCollapsed">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <img src="/images/logo.png" alt="Deho Logo" class="logo-img">
+        <span class="logo-text">DEHO ADMIN</span>
+      </div>
+      <button class="toggle-btn" (click)="toggleSidebar()">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/thongke" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Thống kê</span>
+      </a>
+      <a routerLink="/quanlysanpham" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">📦</span>
+        <span class="nav-label">Sản phẩm</span>
+      </a>
+      <a routerLink="/quanlydanhmuc" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">📁</span>
+        <span class="nav-label">Danh mục</span>
+      </a>
+      <a routerLink="/quanlydonhang" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">🛒</span>
+        <span class="nav-label">Đơn hàng</span>
+      </a>
+      <a routerLink="/quanlynguoidung" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">👤</span>
+        <span class="nav-label">Khách hàng</span>
+      </a>
+      <a routerLink="/chat" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">💬</span>
+        <span class="nav-label">Trò chuyện</span>
+        <span class="badge-new" *ngIf="false">1</span> <!-- Placeholder cho tin nhắn mới -->
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button (click)="logout()" class="logout-btn">
+        <span class="nav-icon">🚪</span>
+        <span class="nav-label">Đăng xuất</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+    <header class="top-header">
+      <div class="header-left">
+        <h2 class="page-title">Hệ thống quản trị Deho</h2>
+      </div>
+      <div class="header-right">
+        <div class="user-profile">
+          <span class="user-name">Admin Deho</span>
+          <img src="/images/avt.png" alt="Admin" class="user-avatar">
+        </div>
+      </div>
+    </header>
+
+    <div class="content-body">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+
+  <!-- Global Floating Chat Button (Quick Access) -->
+  <button class="floating-chat-btn" routerLink="/chat">
+    <svg viewBox="0 0 24 24" width="28" height="28" fill="white">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+    </svg>
+  </button>
+</div>

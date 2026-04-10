@@ -13,9 +13,9 @@ const getAllProducts = async ({ categoryId, sortBy, order, name } = {}) => {
       query.name = { $regex: name, $options: 'i' };
     }
 
-    let sort = {};
+    let sort = { createdAt: -1 }; // Mặc định mới nhất trước
     if (sortBy === 'price' && order) {
-      sort.price = order === 'asc' ? 1 : -1;
+      sort = { price: order === 'asc' ? 1 : -1 };
     }
 
     return await Product.find(query).sort(sort).lean();

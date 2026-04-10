@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 export class lichsudonhangComponent implements OnInit {
   user: any = null;
   orders: any[] = [];
+  loading = true;
 
   constructor(private userService: UserService, private router: Router) {}
 
@@ -28,40 +29,44 @@ export class lichsudonhangComponent implements OnInit {
   }
 
   loadOrders(): void {
+    this.loading = true;
     this.userService.getOrders().subscribe(
       (response) => {
-        console.log('API response:', response);
-        this.orders = response.data || response;
-        this.orders = this.orders.map((order) => {
-          console.log('Order items:', order.items);
-          return {
-            ...order,
-            orderDate: new Date(order.createdAt).toLocaleDateString('vi-VN'),
-            product: order.items && order.items.length > 0 ? {
-              productName: order.items[0].productName,
-              quantity: order.items[0].quantity,
-              image: order.items[0].thumbnail || order.items[0].productId?.thumbnail || '' // Ưu tiên thumbnail từ items
-            } : {},
-          };
-        });
-        console.log('Mapped orders:', this.orders);
+        const rawOrders = response.data || response;
+        this.orders = rawOrders.map((order: any) => ({
+          ...order,
+          orderDateFormatted: new Date(order.createdAt).toLocaleDateString('vi-VN'),
+          // Map tất cả items thay vì chỉ lấy cái đầu tiên
+          displayItems: (order.items || []).map((item: any) => ({
+            name: item.productName || 'Sản phẩm',
+            qty: item.quantity,
+            image: item.thumbnail || '/images/products/default.png'
+          }))
+        }));
+        this.loading = false;
       },
       (error) => {
+        this.loading = false;
         console.error('Error loading orders:', error);
-        let errorMessage = 'Không thể tải lịch sử đơn hàng!';
         if (error.status === 401 || error.status === 403) {
-          errorMessage = 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.';
           this.router.navigate(['/dangnhap']);
-        } else if (error.error?.message) {
-          errorMessage = error.error.message;
         }
-        alert(errorMessage);
       }
     );
   }
 
-  viewOrderDetails(orderId: number): void {
-    this.router.navigate(['/donhang', orderId]);
+  viewOrderDetails(orderId: string): void {
+    // Sửa đường dẫn để khớp với DonhangComponent sử dụng queryParams
+    this.router.navigate(['/donhang'], { queryParams: { orderId: orderId } });
+  }
+
+  getStatusClass(status: string): string {
+    switch (status) {
+      case 'Đã giao': case 'Đã hoàn thành': return 'status-completed';
+      case 'Đã hủy': return 'status-cancelled';
+      case 'Đang giao': return 'status-shipping';
+      default: return 'status-pending';
+    }
   }
 
   logout(): void {

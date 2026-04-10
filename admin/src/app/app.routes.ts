@@ -7,16 +7,28 @@ import { QuanlysanphamComponent } from './quanlysanpham/quanlysanpham.component'
 import { QuanlynguoidungComponent } from './quanlynguoidung/quanlynguoidung.component';
 import { QuanlydonhangComponent } from './quanlydonhang/quanlydonhang.component';
 import { DonhangchitietComponent } from './donhangchitiet/donhangchitiet.component';
+import { ChatComponent } from './chat/chat.component';
+import { LayoutComponent } from './layout/layout.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full' }, // Redirect mặc định đến /login
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-  { path: 'thongke', component: ThongkeComponent, canActivate: [AdminAuthGuard] },
-  { path: 'quanlydanhmuc', component: QuanlydanhmucComponent, canActivate: [AdminAuthGuard] },
-  { path: 'quanlysanpham', component: QuanlysanphamComponent, canActivate: [AdminAuthGuard] },
-  { path: 'quanlynguoidung', component: QuanlynguoidungComponent, canActivate: [AdminAuthGuard] },
-  { path: 'quanlydonhang', component: QuanlydonhangComponent, canActivate: [AdminAuthGuard] },
-  { path: 'order/:id', component: DonhangchitietComponent, canActivate: [AdminAuthGuard] },
+  
+  // Các route yêu cầu Layout và Auth
+  {
+    path: '',
+    component: LayoutComponent,
+    canActivate: [AdminAuthGuard],
+    children: [
+      { path: 'thongke', component: ThongkeComponent },
+      { path: 'quanlydanhmuc', component: QuanlydanhmucComponent },
+      { path: 'quanlysanpham', component: QuanlysanphamComponent },
+      { path: 'quanlynguoidung', component: QuanlynguoidungComponent },
+      { path: 'quanlydonhang', component: QuanlydonhangComponent },
+      { path: 'order/:id', component: DonhangchitietComponent },
+      { path: 'chat', component: ChatComponent },
+    ]
+  },
 
-  { path: '**', redirectTo: '/login' }, // Fallback route
+  { path: '**', redirectTo: '/login' },
 ];

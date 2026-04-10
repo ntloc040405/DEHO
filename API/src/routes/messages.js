@@ -1,18 +1,12 @@
 const express = require('express');
 const router = express.Router();
+const messageController = require('../controllers/messageController');
+const { verifyToken, verifyAdmin } = require('../middlewares/authMiddleware');
 
-const Message = require('../models/messages');
+// Route cho admin lấy danh sách các cuộc hội thoại
+router.get('/conversations', verifyToken, verifyAdmin, messageController.getConversations);
 
-// Lấy tin nhắn giữa 2 người
-router.get('/:user1/:user2', async (req, res) => {
-  const { user1, user2 } = req.params;
-  const messages = await Message.find({
-    $or: [
-      { sender: user1, receiver: user2 },
-      { sender: user2, receiver: user1 },
-    ],
-  }).sort({ timestamp: 1 });
-  res.json(messages);
-});
+// Route lấy lịch sử chat giữa admin và 1 user cụ thể (Mở công khai để khách vãng lai cũng lấy được)
+router.get('/history/:userId', messageController.getChatHistory);
 
 module.exports = router;

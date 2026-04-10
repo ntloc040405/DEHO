@@ -1,130 +1,91 @@
-#!/usr/bin/env node
-
-/**
- * Module dependencies.
- */
-
-var { app, Message } = require('../src/app');
-var debug = require('debug')('myapp:server');
-var http = require('http');
 require('dotenv').config();
+
+const { app } = require('../src/app');
+const http = require('http');
 const socketIo = require('socket.io');
+const mongoose = require('mongoose');
 
-/**
- * Get port from environment and store in Express.
- */
+const port = process.env.PORT || 4405;
+const server = http.createServer(app);
 
-var port = normalizePort(process.env.PORT || '3000');
-
-/**
- * Create HTTP server.
- */
-
-var server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: ['http://localhost:4200', 'http://localhost:4201'],
-    methods: ['GET', 'POST']
-  }
+    origin: '*',
+  },
 });
 
 io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
+  console.log('User connected:', socket.id);
+  
+  // Lấy model Message một cách an toàn
+  const Message = mongoose.model('Message');
 
-  socket.on('join', (role) => {
-    socket.join(role);
-    console.log(`${role} joined: ${socket.id}`);
+  // Người dùng (admin hoặc client) join vào room riêng của mình dựa trên ID
+  socket.on('join', ({ userId, role }) => {
+    // Luôn join vào room userId nếu có, hoặc role nếu không (cho legacy support)
+    const roomToJoin = userId || role;
+    socket.join(roomToJoin);
+    
+    // Nếu là admin, join thêm một room chung 'admin_room' để nhận thông báo mới
+    if (role === 'admin' || userId === '67e32d8b2157440b136ea729') {
+      socket.join('admin_room');
+    }
+    
+    console.log(`User ${socket.id} joined room: ${roomToJoin}`);
   });
 
-  socket.on('sendMessage', (messageData) => {
-    const { from, to, message } = messageData;
-    io.to('admin').emit('receiveMessage', { from, message });
-    saveMessage(from, to, message);
+  // Khách hàng gửi tin nhắn cho Admin
+  socket.on('sendMessage', async ({ senderId, name, avatar, message }) => {
+    try {
+      if (!senderId || !message) return;
+
+      const msgData = {
+        senderId,
+        receiverId: '67e32d8b2157440b136ea729', // ID thực tế của Admin từ seed
+        senderRole: 'customer',
+        name: name || 'Khách hàng',
+        avatar: avatar || '/images/avt.png',
+        message,
+        timestamp: new Date()
+      };
+      // Lưu vào database
+      const newMessage = await Message.create(msgData);
+      console.log('📝 Tin nhắn từ khách lưu thành công:', newMessage._id);
+      
+      // Gửi tới tất cả admin thông qua room chung
+      io.to('admin_room').emit('receiveMessage', msgData);
+      console.log('📡 Đã phát tin nhắn tới Admin room');
+    } catch (err) {
+      console.error('Socket error in sendMessage:', err);
+    }
   });
 
-  socket.on('replyMessage', (messageData) => {
-    const { from, to, message } = messageData;
-    io.to('client').emit('receiveMessage', { from, message });
-    saveMessage(from, to, message);
-  });
+  // Admin trả lời khách hàng
+  socket.on('replyMessage', async ({ receiverId, message }) => {
+    try {
+      if (!receiverId || !message) return;
 
-  socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
+      const msgData = {
+        senderId: '67e32d8b2157440b136ea729', // ID thực tế của Admin từ seed
+        receiverId,
+        senderRole: 'admin',
+        name: 'Admin',
+        message,
+        timestamp: new Date()
+      };
+      // Lưu vào database
+      const newMessage = await Message.create(msgData);
+      console.log('📝 Tin nhắn reply từ Admin lưu thành công:', newMessage._id);
+      
+      // Gửi trực tiếp tới khách hàng dựa trên ID của họ
+      io.to(receiverId).emit('receiveMessage', msgData);
+      console.log(`📡 Đã phát tin nhắn tới khách hàng: ${receiverId}`);
+    } catch (err) {
+      console.error('Socket error in replyMessage:', err);
+    }
   });
 });
 
-const saveMessage = async (from, to, message) => {
-  try {
-    await Message.create({ from, to, message });
-  } catch (err) {
-    console.error('Error saving message:', err);
-  }
-};
-
-/**
- * Listen on provided port, on all network interfaces.
- */
-
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
-
-/**
- * Normalize a port into a number, string, or false.
- */
-
-function normalizePort(val) {
-  var port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
-
-  if (port >= 0) {
-    // port number
-    return port;
-  }
-
-  return false;
-}
-
-/**
- * Event listener for HTTP server "error" event.
- */
-
-function onError(error) {
-  if (error.syscall !== 'listen') {
-    throw error;
-  }
-
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
-
-  // handle specific listen errors with friendly messages
-  switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
-      process.exit(1);
-      break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
-      process.exit(1);
-      break;
-    default:
-      throw error;
-  }
-}
-
-/**
- * Event listener for HTTP server "listening" event.
- */
-
-function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
-  debug('Listening on ' + bind);
-}
+server.listen(port, () => {
+  console.log(`🚀 Server running on port ${port}`);
+});

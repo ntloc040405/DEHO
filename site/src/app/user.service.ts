@@ -6,12 +6,12 @@ import { BehaviorSubject, Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class UserService {
-  private apiUrl = 'http://localhost:3000/users';
-  private apiUrlT = 'http://localhost:3000';
-  private userSubject = new BehaviorSubject<any>(null);
+  private readonly apiUrl = 'http://localhost:4405/users';
+  private readonly apiUrlT = 'http://localhost:4405';
+  private readonly userSubject = new BehaviorSubject<any>(null);
   user$ = this.userSubject.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(private readonly http: HttpClient) {
     const userData = localStorage.getItem('user');
     if (userData) {
       this.userSubject.next(JSON.parse(userData));
@@ -53,6 +53,30 @@ export class UserService {
 
   isLoggedIn(): boolean {
     return !!this.userSubject.value || !!localStorage.getItem('token');
+  }
+
+  // Kiểm tra phiên làm việc để xóa dữ liệu ảo nếu DB bị reset
+  validateSession(): void {
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+
+    if (token && user) {
+      const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+      this.http.get(`${this.apiUrlT}/users/me`, { headers }).subscribe({
+        next: (res: any) => {
+          if (res.success && res.data) {
+            this.updateUser(res.data);
+          } else {
+            this.clearUser();
+          }
+        },
+        error: () => {
+          this.clearUser();
+        }
+      });
+    } else {
+      this.clearUser();
+    }
   }
 
   // Lấy đơn hàng người dùng

@@ -1,20 +1,19 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moho - Trang chủ</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head> 
-<body>
-<header>
-  <div class="container">
-    <div class="top-header">
-      <div class="logo">
-        <a href="/"><img src="./images/logo.png" alt="Moho"></a>
-      </div>
-      <div class="search-box">
-        <form (ngSubmit)="onSearch()">
+<header class="site-header" [class.scrolled]="isScrolled">
+  <div class="header-inner container">
+    <!-- Logo -->
+    <div class="header-logo">
+      <a routerLink="/">
+        <img src="./images/logo.png" alt="Deho" />
+      </a>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="header-search">
+      <form (ngSubmit)="onSearch()">
+        <div class="search-wrapper">
+          <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18">
+            <path fill="none" stroke="currentColor" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+          </svg>
           <input
             type="text"
             placeholder="Tìm kiếm sản phẩm..."
@@ -22,56 +21,110 @@
             name="q"
             (keyup.enter)="onSearch()"
           />
-          <button type="submit"><i class="fas fa-search"></i></button>
-        </form>
-      </div>
-      <div class="header-actions">
-        <a href="#" class="three-d-house">3D HOUSE</a>
-        <div class="account-menu">
-          <a *ngIf="!isLoggedIn" [routerLink]="['/dangnhap']">
-            <i class="far fa-user"></i>
-            <span>Đăng nhập / Đăng ký <br />Tài khoản của tôi <i class="fas fa-chevron-down"></i></span>
-          </a>
-          <div *ngIf="isLoggedIn" class="user-icon" (click)="toggleMenu()">
+          <button type="submit" class="search-btn">Tìm kiếm</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Actions -->
+    <div class="header-actions">
+      <!-- Account -->
+      <div class="action-account">
+        <a *ngIf="!isLoggedIn" [routerLink]="['/dangnhap']" class="account-link">
+          <div class="action-icon-wrap">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <div class="action-text">
+            <span class="action-hint">Đăng nhập / Đăng ký</span>
+            <span class="action-label">Tài khoản</span>
+          </div>
+        </a>
+
+        <div *ngIf="isLoggedIn" class="user-menu" (click)="toggleMenu()">
+          <div class="user-avatar-wrap">
             <img
               *ngIf="user?.avatar"
-              [src]="'http://localhost:3000' + user.avatar"
+              [src]="'http://localhost:4405' + user.avatar"
               alt="Avatar"
-              class="avatar"
+              class="user-avatar"
             />
-            <i *ngIf="!user?.avatar" class="far fa-user"></i>
-          </div>
-          <!-- Dropdown menu -->
-          <div *ngIf="showMenu" class="dropdown-menu" [ngClass]="{ show: showMenu }">
-            <div class="dropdown-content">
-              <h3>Xin chào, {{ user?.name || 'Người dùng' }}</h3>
-              <ul>
-                <li><a [routerLink]="['/userinfo']">Thông tin cá nhân</a></li>  
-                <li><a [routerLink]="['/donhang']">Đơn hàng đã mua</a></li>
-                <li><a [routerLink]="['/']">Cài đặt</a></li>
-                <li><a (click)="logout()">Đăng xuất</a></li>
-              </ul>
+            <div *ngIf="!user?.avatar" class="user-avatar-placeholder">
+              {{ (user?.name || 'U')[0].toUpperCase() }}
             </div>
           </div>
+          <div class="action-text">
+            <span class="action-hint">Xin chào</span>
+            <span class="action-label">{{ user?.name || 'Người dùng' }}</span>
+          </div>
+          <svg class="chevron-icon" [class.rotated]="showMenu" viewBox="0 0 24 24" width="14" height="14">
+            <path fill="none" stroke="currentColor" stroke-width="2" d="M6 9l6 6 6-6"/>
+          </svg>
         </div>
-        <div class="cart">
-          <a routerLink="/giohang" class="cart-icon">
-            <i class="fas fa-shopping-cart"></i>
-            <span class="cart-count">{{ cartItemCount }}</span>
-            <span>Giỏ hàng</span>
-          </a>
+
+        <!-- Dropdown -->
+        <div class="user-dropdown" [class.show]="showMenu" *ngIf="isLoggedIn">
+          <div class="dropdown-header">
+            <div class="dropdown-avatar">
+              <img *ngIf="user?.avatar" [src]="'http://localhost:4405' + user.avatar" alt="" />
+              <div *ngIf="!user?.avatar" class="dropdown-avatar-placeholder">{{ (user?.name || 'U')[0].toUpperCase() }}</div>
+            </div>
+            <div>
+              <p class="dropdown-name">{{ user?.name }}</p>
+              <p class="dropdown-email">{{ user?.email }}</p>
+            </div>
+          </div>
+          <div class="dropdown-divider"></div>
+          <ul class="dropdown-list">
+            <li><a [routerLink]="['/userinfo']">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Thông tin cá nhân
+            </a></li>
+            <li><a [routerLink]="['/donhang']">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              Đơn hàng của tôi
+            </a></li>
+          </ul>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-logout" (click)="logout()">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Đăng xuất
+          </button>
         </div>
       </div>
+
+      <!-- Cart -->
+      <a routerLink="/giohang" class="action-cart">
+        <div class="cart-icon-wrap">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <span class="cart-badge" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
+        </div>
+        <div class="action-text">
+          <span class="action-hint">Giỏ hàng</span>
+          <span class="action-label">{{ cartItemCount }} sản phẩm</span>
+        </div>
+      </a>
     </div>
-    <nav class="main-nav">
-      <ul>
-        <li class="has-dropdown"><a href="#">Trang Chủ</a></li>
-        <li class="has-dropdown"><a routerLink="/sanpham">Sản Phẩm</a></li>
-        <li class="has-dropdown"><a routerLink="/lienhe">Liên Hệ</a></li>
-        <li><a routerLink="/gioithieu">Giới Thiệu</a></li>
-      </ul>
-    </nav>
   </div>
+
+  <!-- Main Navigation -->
+  <nav class="main-nav">
+    <div class="container">
+      <ul class="nav-list">
+        <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Trang Chủ</a></li>
+        <li><a routerLink="/sanpham" routerLinkActive="active">Sản Phẩm</a></li>
+        <li><a routerLink="/lienhe" routerLinkActive="active">Liên Hệ</a></li>
+        <li><a routerLink="/gioithieu" routerLinkActive="active">Giới Thiệu</a></li>
+      </ul>
+    </div>
+  </nav>
 </header>
-</body>
-</html>
+
+<!-- Overlay khi dropdown mở -->
+<div class="header-overlay" [class.show]="showMenu" (click)="toggleMenu()"></div>

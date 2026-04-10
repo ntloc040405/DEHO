@@ -40,7 +40,7 @@ interface OrderData {
 })
 export class DonhangComponent implements OnInit {
   order: OrderData | null = null;
-  private apiUrl = 'http://localhost:3000/orders';
+  private apiUrl = 'http://localhost:4405/orders';
 
   constructor(
     private router: Router,
@@ -51,10 +51,7 @@ export class DonhangComponent implements OnInit {
   ngOnInit(): void {
     // Lấy orderId từ query params
     const orderId = this.route.snapshot.queryParams['orderId'];
-    console.log('Order ID from query params:', orderId);
-
     if (orderId) {
-      // Gọi API để lấy chi tiết đơn hàng
       const token = localStorage.getItem('token');
       const headers = new HttpHeaders({
         Authorization: `Bearer ${token}`,
@@ -62,31 +59,33 @@ export class DonhangComponent implements OnInit {
 
       this.http.get(`${this.apiUrl}/${orderId}`, { headers }).subscribe({
         next: (response: any) => {
-          console.log('Order data from API:', response);
-          // Chuyển đổi dữ liệu API thành định dạng OrderData
-          this.order = {
-            cartItems: response.data.items.map((item: any) => ({
-              product: {
-                _id: item.productId._id,
-                name: item.productId.name,
-                price: item.price,
-                salePrice: item.productId.salePrice,
-                thumbnail: item.productId.thumbnail,
+          if (response.success && response.data) {
+            const data = response.data;
+            // Ánh xạ dữ liệu từ API (items có productName và thumbnail trực tiếp)
+            this.order = {
+              cartItems: data.items.map((item: any) => ({
+                product: {
+                  _id: item.productId,
+                  name: item.productName || 'Sản phẩm',
+                  price: item.price,
+                  salePrice: null,
+                  thumbnail: item.thumbnail || '',
+                },
+                quantity: item.quantity,
+              })),
+              totalPrice: data.total,
+              shippingInfo: {
+                fullName: data.customerName,
+                phone: data.customerPhone,
+                address: data.customerAddress,
+                note: data.customerNote,
+                shippingMethod: 'free',
+                paymentMethod: 'cod',
               },
-              quantity: item.quantity,
-            })),
-            totalPrice: response.data.total,
-            shippingInfo: {
-              fullName: response.data.customerName,
-              phone: response.data.customerPhone,
-              address: response.data.customerAddress,
-              note: response.data.customerNote,
-              shippingMethod: 'free', // Giả sử mặc định
-              paymentMethod: 'cod', // Giả sử mặc định
-            },
-            orderNote: response.data.customerNote,
-            orderDate: response.data.createdAt,
-          };
+              orderNote: data.customerNote,
+              orderDate: data.createdAt,
+            };
+          }
         },
         error: (err) => {
           console.error('Error fetching order:', err);
@@ -94,7 +93,6 @@ export class DonhangComponent implements OnInit {
         },
       });
     } else {
-      console.warn('No orderId found in query params');
       this.router.navigate(['/giohang']);
     }
   }

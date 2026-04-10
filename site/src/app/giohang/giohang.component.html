@@ -1,120 +1,130 @@
-<div class="breadcrumb">
+<!-- Breadcrumb -->
+<div class="breadcrumb-bar">
   <div class="container">
-    <ul>
-      <li><a href="/">Trang chủ</a></li>
-      <li>Giỏ hàng ({{ cartItemCount }})</li>
-    </ul>
+    <nav class="breadcrumb">
+      <a href="/">Trang chủ</a>
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      <span>Giỏ hàng ({{ cartItemCount }})</span>
+    </nav>
   </div>
 </div>
 
-<main>
+<main class="cart-page">
   <div class="container">
-    <h1 class="page-title">Giỏ hàng của bạn</h1>
-
-    <div class="cart-container">
-      <div class="cart-products">
-        <div class="cart-info">
-          <p>Có <span>{{ cartItemCount }} sản phẩm</span> trong giỏ hàng</p>
-        </div>
-
-        <div class="cart-item" *ngFor="let item of cartItems">
-          <div class="cart-item-image">
-            <img  [src]="'http://localhost:3000' + item.product.thumbnail" [alt]="item.product.name" />
-          </div>
-          <div class="cart-item-details">
-            <h3 class="product-title">{{ item.product.name }}</h3>
-            <div class="product-price">
-              <span class="current-price">{{ (item.product.salePrice || item.product.price) | number:'1.0-0' }}đ</span>
-              <span class="original-price" *ngIf="item.product.salePrice">({{ item.product.price | number:'1.0-0' }}đ)</span>
-            </div>
-            <div class="quantity-control">
-              <button class="decrease" (click)="updateQuantity(item.product._id, item.quantity - 1)">-</button>
-              <input type="text" [value]="item.quantity" readonly />
-              <button class="increase" (click)="updateQuantity(item.product._id, item.quantity + 1)">+</button>
-            </div>
-          </div>
-          <div class="cart-item-total">
-            <span>{{ (item.product.salePrice || item.product.price) * item.quantity | number:'1.0-0' }}đ</span>
-          </div>
-          <div class="cart-item-remove">
-            <button class="remove-btn" (click)="removeFromCart(item.product._id)">×</button>
-          </div>
-        </div>
+    <!-- Empty Cart State -->
+    <div class="cart-empty" *ngIf="cartItemCount === 0">
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24" width="60" height="60" fill="none" stroke="currentColor" stroke-width="1">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
       </div>
-
-      <div class="cart-summary">
-        <h2 class="summary-title">Thông tin đơn hàng</h2>
-        <div class="summary-row">
-          <span>Tổng tiền:</span>
-          <span class="total-price">{{ totalPrice | number:'1.0-0' }}đ</span>
-        </div>
-        <button class="checkout-btn" (click)="checkout()">THANH TOÁN</button>
-
-        <div class="delivery-options">
-          <div class="continue-shopping">
-            <a href="#"><i class="arrow-icon"></i> Tiếp tục mua hàng</a>
-          </div>
-
-          <div class="delivery-option">
-            <i class="check-icon"></i>
-            <div class="delivery-text">
-              <strong>Không rủi ro. Đặt hàng trước, thanh toán sau tại nhà. Miễn phí giao hàng & lắp đặt</strong>
-              <span>tại tất cả quận huyện thuộc TP.HCM, Hà Nội, Khu đô thị Ecopark, Biên Hòa và một số khu vực thuộc Bình Dương (*)</span>
-            </div>
-          </div>
-
-          <div class="delivery-option">
-            <i class="check-icon"></i>
-            <div class="delivery-text">
-              <strong>Đơn hàng của quý khách sẽ được <span class="highlight">giao hàng trong vòng 3 ngày</span>,</strong>
-              <span>vui lòng đợi nhân viên tư vấn xác nhận lịch giao hàng trước khi thực hiện chuyển khoản đơn hàng</span>
-            </div>
-          </div>
-
-          <div class="delivery-option">
-            <i class="check-icon"></i>
-            <div class="delivery-text">
-              <strong>Miễn phí 1 đổi 1 - Bảo hành 2 năm - Bảo trì trọn đời</strong>
-              <span>(**)</span>
-            </div>
-          </div>
-
-          <div class="delivery-option">
-            <i class="check-icon"></i>
-            <div class="delivery-text">
-              <strong>Tất cả sản phẩm được thiết kế bởi các chuyên gia thiết kế nội thất đến từ</strong>
-              <span>Đan Mạch và Hàn Quốc</span>
-            </div>
-          </div>
-
-          <div class="delivery-option">
-            <i class="check-icon"></i>
-            <div class="delivery-text">
-              <strong>Chất lượng Quốc Tế đảm bảo theo tiêu chuẩn</strong>
-              <span>cho người dùng tại Việt Nam</span>
-            </div>
-          </div>
-
-          <div class="delivery-option">
-            <i class="check-icon"></i>
-            <div class="delivery-text">
-              <strong>Sản xuất tại nhà máy SAVIMEX với gần</strong>
-              <span>40 năm kinh nghiệm</span>
-            </div>
-          </div>
-
-          <div class="notes">
-            <p>(*) Không áp dụng cho danh mục Đồ Trang Trí</p>
-            <p>(**) Không áp dụng cho các sản phẩm Clearance.</p>
-          </div>
-        </div>
-      </div>
+      <h2>Giỏ hàng của bạn đang trống</h2>
+      <p>Hãy khám phá và thêm những sản phẩm bạn yêu thích nhé!</p>
+      <a routerLink="/sanpham" class="btn-continue-shopping primary">
+        Khám phá sản phẩm
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
     </div>
 
-    <div class="cart-actions">
-      <div class="order-note">
-        <h3>Ghi chú đơn hàng</h3>
-        <textarea placeholder="Nhập ghi chú đơn hàng của bạn..." [(ngModel)]="orderNote"></textarea>
+    <!-- Cart with Items -->
+    <div class="cart-layout" *ngIf="cartItemCount > 0">
+      <!-- Left: Products -->
+      <div class="cart-products-col">
+        <div class="cart-products-header">
+          <h1>Giỏ hàng của bạn</h1>
+          <span class="cart-count-badge">{{ cartItemCount }} sản phẩm</span>
+        </div>
+
+        <div class="cart-items-list">
+          <div class="cart-item" *ngFor="let item of cartItems">
+            <div class="cart-item-image">
+              <img [src]="'http://localhost:4405' + item.product.thumbnail" [alt]="item.product.name" />
+            </div>
+
+            <div class="cart-item-body">
+              <h3 class="cart-item-name">{{ item.product.name }}</h3>
+              <div class="cart-item-meta">
+                <span class="cart-item-cat" *ngIf="item.product.categoryId">{{ item.product.categoryId.name }}</span>
+              </div>
+              <div class="cart-item-price">
+                <span class="item-current-price">{{ (item.product.salePrice || item.product.price) | number:'1.0-0' }}₫</span>
+                <span class="item-old-price" *ngIf="item.product.salePrice">{{ item.product.price | number:'1.0-0' }}₫</span>
+              </div>
+            </div>
+
+            <div class="cart-item-actions">
+              <div class="qty-control">
+                <button class="qty-btn" (click)="updateQuantity(item.product._id, item.quantity - 1)">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/></svg>
+                </button>
+                <span class="qty-num">{{ item.quantity }}</span>
+                <button class="qty-btn" (click)="updateQuantity(item.product._id, item.quantity + 1)">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+                </button>
+              </div>
+              <div class="item-total">{{ (item.product.salePrice || item.product.price) * item.quantity | number:'1.0-0' }}₫</div>
+              <button class="remove-btn" (click)="removeFromCart(item.product._id)" title="Xóa">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Note -->
+        <div class="order-note">
+          <h4>Ghi chú đơn hàng</h4>
+          <textarea placeholder="Nhập yêu cầu đặc biệt cho đơn hàng của bạn..." [(ngModel)]="orderNote" rows="3"></textarea>
+        </div>
+
+        <a routerLink="/sanpham" class="btn-continue-shopping">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Tiếp tục mua hàng
+        </a>
+      </div>
+
+      <!-- Right: Order Summary -->
+      <div class="cart-summary-col">
+        <div class="cart-summary-card">
+          <h2 class="summary-title">Tóm tắt đơn hàng</h2>
+
+          <div class="summary-line">
+            <span>Tạm tính ({{ cartItemCount }} sản phẩm)</span>
+            <span>{{ totalPrice | number:'1.0-0' }}₫</span>
+          </div>
+          <div class="summary-line">
+            <span>Phí giao hàng</span>
+            <span class="free-badge">Miễn phí</span>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-total">
+            <span>Tổng đơn hàng</span>
+            <span class="total-amount">{{ totalPrice | number:'1.0-0' }}₫</span>
+          </div>
+
+          <button class="btn-checkout" (click)="checkout()">
+            Tiến hành thanh toán
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+
+          <!-- Trust Signals -->
+          <div class="summary-trust">
+            <div class="trust-row">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#10b981" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              <span>Miễn phí giao hàng & lắp đặt trong nội thành</span>
+            </div>
+            <div class="trust-row">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#10b981" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              <span>Bảo hành 2 năm – Miễn phí 1 đổi 1</span>
+            </div>
+            <div class="trust-row">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#10b981" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              <span>Giao hàng trong vòng 3 ngày làm việc</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

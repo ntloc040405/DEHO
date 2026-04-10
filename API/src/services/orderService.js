@@ -4,7 +4,7 @@ const Order = require('../models/orderModel');
 const Product = require('../models/productModel');
 
 const getAllOrders = async () => {
-  return await Order.find();
+  return await Order.find().sort({ createdAt: -1 });
 };
 
 const getOrderById = async (id) => {

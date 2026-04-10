@@ -38,7 +38,7 @@ export class CheckoutComponent implements OnInit {
     shippingMethod: 'free',
     paymentMethod: 'cod',
   };
-  private apiUrl = 'http://localhost:3000/orders';
+  private apiUrl = 'http://localhost:4405/orders';
 
   constructor(
     private cartService: CartService,

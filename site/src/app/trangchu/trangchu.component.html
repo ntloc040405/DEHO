@@ -1,16 +1,130 @@
-<section class="banner">
-  <div class="banner-image">
-      <img src="./images/banner.png">
-  </div>
-  <div class="banner-navigation">
-      <button class="prev-button"><i class="fas fa-chevron-left"></i></button>
-      <button class="next-button"><i class="fas fa-chevron-right"></i></button>
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-slider">
+    <div class="hero-slide active" style="background: linear-gradient(135deg, #0e3d73 0%, #1a5ca8 50%, #2d78d5 100%);">
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-badge">✨ Bộ sưu tập 2025</div>
+          <h1 class="hero-title">Không gian sống<br /><span class="hero-title-highlight">đẳng cấp quốc tế</span></h1>
+          <p class="hero-desc">Nội thất cao cấp được thiết kế bởi các chuyên gia Đan Mạch và Hàn Quốc. Chuẩn xuất khẩu Mỹ, an toàn cho sức khỏe gia đình bạn.</p>
+          <div class="hero-actions">
+            <a routerLink="/sanpham" class="hero-btn-primary">
+              Khám phá ngay
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </a>
+            <a routerLink="/gioithieu" class="hero-btn-secondary">Về Deho</a>
+          </div>
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <span class="hero-stat-num">40+</span>
+              <span class="hero-stat-label">Năm kinh nghiệm</span>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+              <span class="hero-stat-num">10k+</span>
+              <span class="hero-stat-label">Khách hàng tin dùng</span>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+              <span class="hero-stat-num">500+</span>
+              <span class="hero-stat-label">Mẫu nội thất</span>
+            </div>
+          </div>
+        </div>
+        <div class="hero-image">
+          <div class="hero-image-frame">
+            <img src="./images/banner.png" alt="Nội thất Deho" />
+          </div>
+          <div class="hero-badge-float hero-badge-float-1">
+            <span>🏆</span> Xuất khẩu quốc tế
+          </div>
+          <div class="hero-badge-float hero-badge-float-2">
+            <span>🛡️</span> Bảo hành 2 năm
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
-<div class="container">
+<!-- USP Features Bar -->
+<section class="features-bar">
+  <div class="container">
+    <div class="features-grid">
+      <div class="feature-item">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </div>
+        <div class="feature-text">
+          <strong>Miễn phí giao hàng</strong>
+          <span>Tại TP.HCM, Hà Nội & Ecopark</span>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+        </div>
+        <div class="feature-text">
+          <strong>Bảo hành chính hãng</strong>
+          <span>Miễn phí 1 đổi 1 & bảo trì trọn đời</span>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+        </div>
+        <div class="feature-text">
+          <strong>Chuẩn quốc tế</strong>
+          <span>Xuất khẩu Mỹ, CARB tiêu chuẩn California</span>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <div class="feature-text">
+          <strong>Hỗ trợ 24/7</strong>
+          <span>Tư vấn thiết kế nội thất miễn phí</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Product Sections -->
+<div class="products-wrapper">
   <app-listcard [data]="newProducts" [title]="'Sản phẩm mới'"></app-listcard>
   <app-listcard [data]="saleProducts" [title]="'Sản phẩm sale'"></app-listcard>
   <app-listcard [data]="hotProducts" [title]="'Sản phẩm hot'"></app-listcard>
-
 </div>
+
+<!-- Brand Promise Banner -->
+<section class="promise-section">
+  <div class="container">
+    <div class="promise-inner">
+      <div class="promise-text">
+        <h2>Hơn 40 năm kiến tạo không gian sống</h2>
+        <p>DEHO là thương hiệu nội thất cao cấp của Savimex – nhà máy sản xuất đạt chuẩn xuất khẩu quốc tế. Chúng tôi mang đến những sản phẩm đẹp, bền, an toàn và thân thiện với môi trường cho ngôi nhà Việt.</p>
+        <a routerLink="/gioithieu" class="hero-btn-primary">
+          Tìm hiểu thêm
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+      <div class="promise-image">
+        <img src="./images/DALUMD Collection.png" alt="Deho Promise" />
+      </div>
+    </div>
+  </div>
+</section>

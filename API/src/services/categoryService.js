@@ -9,7 +9,7 @@ const getAllCategories = async (name) => {
     if (name) {
       query.name = { $regex: name, $options: 'i' };
     }
-    const categories = await Category.find(query);
+    const categories = await Category.find(query).sort({ createdAt: -1 });
     console.log('Categories fetched:', categories);
     return categories;
   } catch (err) {

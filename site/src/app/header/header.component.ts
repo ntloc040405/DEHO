@@ -1,8 +1,7 @@
 import { Component, OnInit, HostListener } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
 import { CartService, ProductInterface } from '../cart.service';
 import { UserService } from '../user.service';
 
@@ -24,6 +23,7 @@ export class HeaderComponent implements OnInit {
   isLoggedIn: boolean = false;
   user: any = null;
   showMenu: boolean = false;
+  isScrolled: boolean = false;
 
   constructor(
     private router: Router,
@@ -32,7 +32,7 @@ export class HeaderComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.checkLoginStatus();
+    this.userService.validateSession(); // Kiểm tra phiên đăng nhập thực tế với server
     this.cartService.cartItems$.subscribe((items: CartItem[]) => {
       this.cartItemCount = this.cartService.getCartItemCount();
     });
@@ -60,10 +60,15 @@ export class HeaderComponent implements OnInit {
     this.showMenu = !this.showMenu;
   }
 
+  @HostListener('window:scroll', [])
+  onWindowScroll(): void {
+    this.isScrolled = window.scrollY > 20;
+  }
+
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
-    if (!target.closest('.account-menu')) {
+    if (!target.closest('.action-account')) {
       this.showMenu = false;
     }
   }

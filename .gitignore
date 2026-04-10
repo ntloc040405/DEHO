@@ -1,4 +1,45 @@
-node_modules
+# Dependency directories
+node_modules/
+dist/
+dist-server/
+.angular/
+
+# Environment files
 .env
-dist
-build
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+Thumbs.db
+*.local
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# Docker
+docker-compose.override.yml
+*.db-journal
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# Databases & Data
+Data/mongodb_data/
+*.sqlite
+
+# Temp
+tmp/
+temp/
+.sass-cache/
+.parcel-cache/
+.eslintcache

@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const userService = require('../services/userService');
 const sendOtpEmail = require('../ultils/mailer');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const otpStore = new Map();
 const getAllUsers = async (req, res) => {
   try {
@@ -16,7 +16,7 @@ const getAllUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.params.id || req.user.id;
     const user = await userService.getUserById(userId);
     res.status(200).json({ success: true, message: 'Lấy thông tin người dùng thành công', data: user });
   } catch (err) {
@@ -38,7 +38,11 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log('Login attempt:', { email });
+    console.log('--- LOGIN ATTEMPT ---');
+    console.log('Email:', email);
+    console.log('Origin:', req.headers.origin);
+    console.log('Referer:', req.headers.referer);
+    console.log('User-Agent:', req.headers['user-agent']);
     const result = await userService.login(email, password);
     res.status(200).json({
       success: true,

@@ -1,39 +1,39 @@
 import { Injectable } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
-  constructor(private socket: Socket) {
-    this.socket = new Socket({ url: 'http://localhost:3000', options: { transports: ['websocket'] } });
+  private apiUrl = 'http://localhost:4405/messages';
+
+  constructor(private socket: Socket, private http: HttpClient) {}
+
+  // Join room dựa trên userId
+  joinRoom(userId: string) {
+    this.socket.emit('join', { userId, role: 'customer' });
   }
 
-  // Kết nối với vai trò 'client'
-  joinAsClient() {
-    this.socket.emit('join', 'client');
+  // Lấy lịch sử chat
+  getChatHistory(userId: string): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get(`${this.apiUrl}/history/${userId}`, { headers });
   }
 
-  // Gửi tin nhắn đến admin
-  sendMessage(message: string) {
+  sendMessage(data: { senderId: string, name: string, avatar: string, message: string }) {
     this.socket.emit('sendMessage', {
-      from: 'client',
-      to: 'admin',
-      message
+      ...data,
+      senderRole: 'customer'
     });
   }
 
-  // Nhận tin nhắn từ admin
-  receiveMessage(): Observable<{ from: string, message: string }> {
-    return new Observable((observer) => {
-      this.socket.on('receiveMessage', (data: { from: string, message: string }) => {
-        observer.next(data);
-      });
-    });
+  receiveMessage(): Observable<any> {
+    return this.socket.fromEvent('receiveMessage');
   }
 
-  // Ngắt kết nối
   disconnect() {
     this.socket.disconnect();
   }

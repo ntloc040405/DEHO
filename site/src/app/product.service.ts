@@ -8,10 +8,10 @@ import { CategoryInterface, ProductInterface } from './product-interface';
   providedIn: 'root',
 })
 export class ProductService {
-  private apiUrl = 'http://localhost:3000/products';
-  private categoriesUrl = 'http://localhost:3000/categories';
+  private apiUrl = 'http://localhost:4405/products';
+  private categoriesUrl = 'http://localhost:4405/categories';
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   // Lấy tất cả sản phẩm
   getAllProducts(): Observable<ProductInterface[]> {

@@ -32,7 +32,7 @@
       <div class="cart-item" *ngFor="let item of order?.cartItems; let i = index">
         <div class="cart-item-image">
           <span class="item-number">{{ i + 1 }}</span>
-          <img [src]="'http://localhost:3000' + item.product.thumbnail" [alt]="item.product.name" />
+          <img [src]="'http://localhost:4405' + item.product.thumbnail" [alt]="item.product.name" />
         </div>
         <div class="cart-item-details">
           <h3 class="cart-item-title">{{ item.product.name }}</h3>

@@ -21,7 +21,7 @@ export class ContactComponent {
     this.successMessage = null;
     this.errorMessage = null;
 
-    this.http.post('http://localhost:3000/contact', this.contact).subscribe({
+    this.http.post('http://localhost:4405/contact', this.contact).subscribe({
       next: (response: any) => {
         this.successMessage = response.message || 'Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm.';
         this.contact = { name: '', email: '', message: '' };

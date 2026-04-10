@@ -1,21 +1,75 @@
-<div class="chat-bubble">
-  <button class="chat-icon" (click)="toggleChat()">
-    <i class="fas fa-comments"></i>
+<div class="chat-wrapper" [class.open]="isChatOpen">
+  <!-- Launcher Button -->
+  <button class="chat-launcher" (click)="toggleChat()" *ngIf="!isChatOpen">
+    <div class="launcher-icon">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"></path>
+      </svg>
+    </div>
+    <span class="launcher-text">Trò chuyện</span>
   </button>
 
+  <!-- Chat Window -->
   <div class="chat-window" *ngIf="isChatOpen">
     <div class="chat-header">
-      <h4>Chat với Admin</h4>
-      <button class="close-btn" (click)="toggleChat()">X</button>
+      <div class="header-info">
+        <div class="header-avatar">
+          <img src="assets/images/logo.png" alt="Logo" onerror="this.src='/images/logo.png'">
+          <div class="online-status"></div>
+        </div>
+        <div class="header-text">
+          <h4>Hỗ trợ Deho</h4>
+          <p>Trực tuyến</p>
+        </div>
+      </div>
+      <button class="close-btn" (click)="toggleChat()">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12"></path>
+        </svg>
+      </button>
     </div>
-    <div class="chat-body">
-      <div class="message" *ngFor="let msg of messages">
-        <strong>{{msg.from}}:</strong> {{msg.message}}
+
+    <div class="chat-body" #scrollMe>
+      <!-- Login Prompt for Guests -->
+      <div class="welcome-msg" *ngIf="!currentUser">
+        <div class="welcome-icon">👋</div>
+        <p>Chào mừng bạn! Vui lòng <strong>đăng nhập</strong> để bắt đầu trò chuyện cùng đội ngũ hỗ trợ của Deho.</p>
+      </div>
+
+      <!-- Welcome for Logged-in -->
+      <div class="welcome-msg" *ngIf="currentUser && messages.length === 0">
+        <div class="welcome-icon">✨</div>
+        <p>Chào <strong>{{ currentUser.name }}</strong>! Chúng tôi có thể giúp gì cho bạn hôm nay?</p>
+      </div>
+
+      <div class="message-list">
+        <div class="msg-item" *ngFor="let msg of messages" 
+             [ngClass]="msg.senderRole === 'admin' ? 'received' : 'sent'">
+          <div class="msg-bubble">{{ msg.message }}</div>
+          <span class="msg-time">{{ msg.timestamp | date:'HH:mm' }}</span>
+        </div>
       </div>
     </div>
+
     <div class="chat-footer">
-      <input type="text" [(ngModel)]="newMessage" placeholder="Nhập tin nhắn..." (keyup.enter)="sendMessage()">
-      <button (click)="sendMessage()">Gửi</button>
+      <div class="input-area" *ngIf="currentUser; else loginBtn">
+        <input 
+          type="text" 
+          [(ngModel)]="newMessage" 
+          (keyup.enter)="sendMessage()" 
+          placeholder="Nhập tin nhắn...">
+        <button [disabled]="!newMessage.trim()" (click)="sendMessage()" class="send-action">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+          </svg>
+        </button>
+      </div>
+      <ng-template #loginBtn>
+        <div class="login-prompt-wrapper">
+          <a routerLink="/dangnhap" class="btn-login-chat" (click)="isChatOpen = false">Đăng nhập ngay</a>
+        </div>
+      </ng-template>
+      <p class="footer-powered">Powered by Deho Team</p>
     </div>
   </div>
 </div>

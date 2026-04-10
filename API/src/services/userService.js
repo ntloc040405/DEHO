@@ -7,17 +7,20 @@ const SECRET_KEY = process.env.SECRET_KEY || 'your-secret-key';
 
 const getAllUsers = async (searchQuery) => {
   try {
-    let query = {};
+    let query = { role: 'customer' }; // Chỉ lấy khách hàng
     if (searchQuery) {
-      query = {
-        $or: [
-          { name: { $regex: searchQuery, $options: 'i' } },
-          { email: { $regex: searchQuery, $options: 'i' } },
-        ],
-      };
+      query.$and = [
+        { role: 'customer' },
+        {
+          $or: [
+            { name: { $regex: searchQuery, $options: 'i' } },
+            { email: { $regex: searchQuery, $options: 'i' } },
+          ],
+        }
+      ];
     }
-    const users = await User.find(query).select('-password');
-    console.log('Users fetched:', users);
+    const users = await User.find(query).sort({ createdAt: -1 }).select('-password');
+    console.log('Users fetched (Customers only):', users);
     return users;
   } catch (err) {
     console.error('Error fetching users:', err.message);
@@ -46,7 +49,8 @@ const getUserById = async (userId) => {
 };
 
 const register = async (userData) => {
-  const { email, password, name, phone, role } = userData;
+  const email = userData.email.toLowerCase();
+  const { password, name, phone, role } = userData;
 
   try {
     const existingUser = await User.findOne({ email });
@@ -82,9 +86,19 @@ const register = async (userData) => {
 
 const login = async (email, password) => {
   try {
-    const user = await User.findOne({ email });
+    const normalizedEmail = email.toLowerCase();
+    console.log('--- Login Diagnostic ---');
+    console.log('Searching for Email:', normalizedEmail);
+    
+    const userCount = await User.countDocuments({});
+    console.log('Total Users in DB:', userCount);
+    
+    const allUsers = await User.find({}).select('email').limit(5);
+    console.log('Sample Emails in DB:', allUsers.map(u => u.email));
+    
+    const user = await User.findOne({ email: normalizedEmail });
     if (!user) {
-      console.log('User not found:', email);
+      console.log('USER NOT FOUND in DB');
       throw new Error('Tài khoản không tồn tại');
     }
 
@@ -186,12 +200,12 @@ const changeUserRole = async (userId, newRole) => {
   }
 };
 const getUserByEmail = async (email) => {
-  return await User.findOne({ email });
+  return await User.findOne({ email: email.toLowerCase() });
 };
 
 const resetPassword = async (email, hashedPassword) => {
   return await User.findOneAndUpdate(
-    { email },
+    { email: email.toLowerCase() },
     { password: hashedPassword },
     { new: true }
   );

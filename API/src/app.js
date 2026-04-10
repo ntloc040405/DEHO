@@ -1,4 +1,4 @@
-var createError = require('http-errors');
+let createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -11,9 +11,11 @@ var usersRouter = require('./routes/users');
 var categoriesRouter = require('./routes/categories');
 var productsRouter = require('./routes/products');
 var orderssRouter = require('./routes/orders');
+var statsRouter = require('./routes/stats');
+var messagesRouter = require('./routes/messages');
 const multer = require('multer');
 const mongoose = require('mongoose');
-
+const bcrypt = require('bcryptjs');
 const viewEngine = require('./config/viewEngine');
 var app = express();
 connectDB();
@@ -41,6 +43,8 @@ app.use('/', indexRouter);
 app.use('/categories', categoriesRouter);
 app.use('/products', require('./routes/products'), productsRouter);
 app.use('/orders', orderssRouter);
+app.use('/stats', statsRouter);
+app.use('/messages', messagesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -55,14 +59,5 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-// Định nghĩa schema và model một lần
-const messageSchema = new mongoose.Schema({
-  from: String,
-  to: String,
-  message: String,
-  timestamp: { type: Date, default: Date.now }
-});
-const Message = mongoose.model('Message', messageSchema);
-
-// Export app và Message model để sử dụng trong bin/www
-module.exports = { app, Message };
+// Export app
+module.exports = { app };
