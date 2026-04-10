@@ -3,14 +3,16 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'locvipkc444@gmail.com',
-    pass: 'oebs jbam peja vgrw',
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   }
 });
 
+const fromEmail = process.env.EMAIL_USER;
+
 const sendOtpEmail = async (to, otp) => {
   await transporter.sendMail({
-    from: '"DEHO Support" <locvipkc444@gmail.com>',
+    from: `"DEHO Support" <${fromEmail}>`,
     to,
     subject: 'Mã OTP xác thực đặt lại mật khẩu',
     html: `

@@ -210,6 +210,26 @@ const resetPassword = async (email, hashedPassword) => {
     { new: true }
   );
 };
+
+const changePassword = async (userId, oldPassword, newPassword) => {
+  try {
+    const user = await User.findById(userId);
+    if (!user) throw new Error('Không tìm thấy người dùng');
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) throw new Error('Mật khẩu cũ không chính xác');
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+    console.log('Password changed successfully for user:', userId);
+    return true;
+  } catch (err) {
+    console.error('Error changing password:', err.message);
+    throw new Error(err.message || 'Lỗi khi đổi mật khẩu');
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -219,4 +239,5 @@ module.exports = {
   changeUserRole,
   getUserByEmail,
   resetPassword,
+  changePassword,
 };

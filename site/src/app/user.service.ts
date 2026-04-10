@@ -102,4 +102,11 @@ export class UserService {
   resetPassword(email: string, newPassword: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/reset-password`, { email, newPassword });
   }
+
+  // 4. Đổi mật khẩu (khi đang đăng nhập)
+  changePassword(oldPassword: string, newPassword: string): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    return this.http.post(`${this.apiUrl}/change-password`, { oldPassword, newPassword }, { headers });
+  }
 }

@@ -182,7 +182,63 @@
 }
 
 .btn-update-avatar:hover {
-  background: #e2e8f0;
+  background-color: #0369a1;
+  transform: translateY(-1px);
+}
+
+/* Password Form Styles */
+.password-form {
+  max-width: 500px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+}
+
+.btn-change-password {
+  background-color: #0ea5e9;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+
+.btn-change-password:hover {
+  background-color: #0284c7;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.error-msg, .success-msg {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.error-msg {
+  background-color: #fef2f2;
+}
+
+.success-msg {
+  background-color: #f0fdf4;
 }
 
 /* Info Section */

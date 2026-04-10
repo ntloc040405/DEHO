@@ -106,8 +106,19 @@ const requestResetPassword = async (req, res) => {
     const otp = Math.floor(1000 + Math.random() * 9000).toString();
     otpStore.set(email, { otp, expiresAt: Date.now() + 5 * 60 * 1000 }); // 5 phút
 
-    await sendOtpEmail(email, otp);
-    res.status(200).json({ success: true, message: 'Đã gửi mã OTP về email' });
+    console.log(`🔑 [DEBUG] OTP for ${email}: ${otp}`); // Log ra console để test
+
+    try {
+      await sendOtpEmail(email, otp);
+      res.status(200).json({ success: true, message: 'Đã gửi mã OTP về email' });
+    } catch (mailErr) {
+      console.error(`📧 [WARN] Mail service failed: ${mailErr.message}`);
+      res.status(200).json({ 
+        success: true, 
+        message: 'Hệ thống đang bận gửi email, nhưng bạn có thể kiểm tra mã OTP trong Server Log để tiếp tục.',
+        debug_info: 'OTP sent to log'
+      });
+    }
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
@@ -121,19 +132,49 @@ const verifyOtp = async (req, res) => {
     if (!record || record.otp !== otp) throw new Error('Mã OTP không hợp lệ');
     if (Date.now() > record.expiresAt) throw new Error('Mã OTP đã hết hạn');
 
+    // Đánh dấu đã xác minh thành công
+    record.isVerified = true;
     res.status(200).json({ success: true, message: 'OTP hợp lệ' });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
 };
 
-// Đặt lại mật khẩu
+// Đặt lại mật khẩu (Dành cho quên mật khẩu)
 const resetPassword = async (req, res) => {
   try {
     const { email, newPassword } = req.body;
+    
+    // Kiểm tra đã qua bước OTP chưa
+    const record = otpStore.get(email);
+    if (!record || !record.isVerified) {
+      throw new Error('Bạn chưa xác thực mã OTP hoặc mã đã hết hạn');
+    }
+
     const hashed = await bcrypt.hash(newPassword, 10);
-    const updated = await userService.resetPassword(email, hashed);
+    await userService.resetPassword(email, hashed);
+    
+    // Xóa record sau khi đổi thành công
+    otpStore.delete(email);
+    
     res.status(200).json({ success: true, message: 'Đặt lại mật khẩu thành công' });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+// Đổi mật khẩu (Dành cho người dùng đang đăng nhập)
+const changePassword = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { oldPassword, newPassword } = req.body;
+    
+    if (!oldPassword || !newPassword) {
+      throw new Error('Vui lòng nhập đầy đủ mật khẩu cũ và mới');
+    }
+
+    await userService.changePassword(userId, oldPassword, newPassword);
+    res.status(200).json({ success: true, message: 'Đổi mật khẩu thành công' });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
@@ -148,4 +189,5 @@ module.exports = {
   requestResetPassword,
   verifyOtp,
   resetPassword,
+  changePassword,
 };

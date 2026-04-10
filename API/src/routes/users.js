@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 
 const { verifyToken, verifyAdmin } = require('../middlewares/authMiddleware');
-const { getAllUsers, login, register, updateUser, getUserById, changeUserRole, requestResetPassword, verifyOtp,  resetPassword } = require('../controllers/userController');
+const { getAllUsers, login, register, updateUser, getUserById, changeUserRole, requestResetPassword, verifyOtp,  resetPassword, changePassword } = require('../controllers/userController');
 const upload = require('../middlewares/uploadMiddleware'); // Thêm middleware upload
 // Lấy danh sách người dùng (admin only)
 router.get('/', verifyToken, verifyAdmin, getAllUsers);
@@ -19,6 +19,9 @@ router.get('/me', verifyToken, getUserById);
 router.put('/profile', verifyToken, upload('uploads').single('avatar'), updateUser); // Sử dụng multer
 // Lấy thông tin người dùng theo ID (yêu cầu token)
 router.get('/:id', verifyToken, getUserById);
+
+// Đổi mật khẩu (yêu cầu token)
+router.post('/change-password', verifyToken, changePassword);
 
 // Thay đổi vai trò người dùng (admin only)
 router.patch('/:id/role', verifyToken, verifyAdmin, changeUserRole);
